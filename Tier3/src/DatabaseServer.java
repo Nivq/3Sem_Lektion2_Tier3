@@ -20,7 +20,7 @@ public class DatabaseServer implements IDbServer {
 	public boolean createAccount(Account account) {
 		try (Connection c = getConnection()) {
 			// Check if account exists
-			if (!c.prepareStatement("SELECT accountID from accounts where accountID = " + account.getAccountId()).execute()) {
+			if (c.prepareStatement("SELECT accountID from accounts where accountID = " + account.getAccountId()).execute()) {
 				System.out.println("Account already exists");
 				return false;
 			}
