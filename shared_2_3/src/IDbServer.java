@@ -2,9 +2,11 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface IDbServer extends Remote {
-	boolean createAccount(Account account) throws RemoteException;
+	boolean createAccount(int accountID) throws RemoteException;
 
-	boolean deposit(Account account, double amount) throws RemoteException;
+	boolean deposit(int accountID, double amount) throws RemoteException;
 
-	boolean withdraw(Account account, double amount) throws RemoteException;
+	boolean withdraw(int accountID, double amount) throws RemoteException;
+
+	void register(ICallbackServer cbServer) throws RemoteException;
 }

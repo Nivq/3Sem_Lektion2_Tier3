@@ -7,47 +7,46 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Server implements IServer{
+public class Server implements ICallbackServer, IServer {
+	private Map<String, ICallbackClient> connectedClients;
+	private IDbServer dbServer;
+
+	public void startServer() throws RemoteException, AlreadyBoundException, NotBoundException {
+		Registry registry = LocateRegistry.createRegistry(1099);
+		registry.bind(NameConstants.Server.name(), this);
+		UnicastRemoteObject.exportObject(this, 1100);
+		connectedClients = new HashMap<>();
+
+		System.out.println("Server Started!");
+
+		// Connecting to database server
+		connectToDbServer();
+	}
+
+	private void connectToDbServer() throws RemoteException, NotBoundException {
+		Registry registry = LocateRegistry.getRegistry(1101);
+		dbServer = (IDbServer) registry.lookup(NameConstants.DBServer.name());
+		dbServer.register((ICallbackServer) this);
+	}
 
 
-    private Map<String, ICallbackClient> connectedClients;
+	@Override
+	public boolean createAccount(int accountID) throws RemoteException {
+		return dbServer.createAccount(accountID);
+	}
 
-    private IDbServer DbServer;
+	@Override
+	public boolean deposit(int accountID, double amount) throws RemoteException {
+		return dbServer.deposit(accountID, amount);
+	}
 
+	@Override
+	public boolean withdraw(int accountID, double amount) throws RemoteException {
+		return dbServer.withdraw(accountID, amount);
+	}
 
-    public void startServer() throws RemoteException, AlreadyBoundException, NotBoundException {
-        Registry registry = LocateRegistry.createRegistry(1099);
-
-        registry.bind(NameConstants.Server.name(), this);
-
-        UnicastRemoteObject.exportObject(this, 1100);
-
-        System.out.println("Server Started!");
-
-        connectedClients = new HashMap<>();
-
-        // connecting to database server
-        connectToDbServer();
-    }
-
-    private void connectToDbServer() throws RemoteException, NotBoundException {
-        Registry registry = LocateRegistry.getRegistry(1101);
-        DbServer = (IDbServer) registry.lookup(NameConstants.DBServer.name());
-    }
-
-
-    @Override
-    public boolean createAccount(Account account) throws RemoteException {
-        return DbServer.createAccount(account);
-    }
-
-    @Override
-    public boolean deposit(Account account, double amount) throws RemoteException {
-        return DbServer.deposit(account,amount);
-    }
-
-    @Override
-    public boolean withdraw(Account account, double amount) throws RemoteException {
-        return DbServer.withdraw(account,amount);
-    }
+	@Override
+	public void update(String message) {
+		System.out.println(message);
+	}
 }
