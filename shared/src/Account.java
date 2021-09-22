@@ -1,4 +1,6 @@
-public class Account {
+import java.io.Serializable;
+
+public class Account implements Serializable {
 	private int accountId;
 	private double balance;
 

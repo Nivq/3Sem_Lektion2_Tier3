@@ -5,6 +5,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabaseServer implements IDbServer {
@@ -34,10 +35,10 @@ public class DatabaseServer implements IDbServer {
 
 
 	@Override
-	public boolean createAccount(Account account) {
+	public boolean createAccount(Account account) throws RemoteException {
 		try (Connection c = getConnection()) {
 			// Check if account exists
-			if (c.prepareStatement("SELECT accountID from accounts where accountID = " + account.getAccountId()).execute()) {
+			if (c.prepareStatement("SELECT accountID from accounts where accountID = " + account.getAccountId()).executeQuery().next()) {
 				System.out.println("Account already exists");
 				return false;
 			}
@@ -53,36 +54,44 @@ public class DatabaseServer implements IDbServer {
 	}
 
 	@Override
-	public boolean deposit(Account account, double amount) {
+	public boolean deposit(Account account, double amount) throws RemoteException {
 		try (Connection c = getConnection()) {
 			// Check if account exists
-			if (!c.prepareStatement("SELECT accountID from accounts where accountID = " + account.getAccountId()).execute()) {
+			if (!c.prepareStatement("SELECT accountID from accounts where accountID = " + account.getAccountId()).executeQuery().next()) {
 				System.out.println("Account does not exist");
 				return false;
 			}
 			// If account does exist
-			double currentBalance = c.prepareStatement("SELECT * FROM accounts WHERE accountID = " + account.getAccountId()).executeQuery().getDouble("balance");
-			c.prepareStatement("UPDATE accounts SET balance = " + currentBalance + account.getBalance() + " WHERE accountID = " + account.getAccountId()).execute();
+			ResultSet r = c.prepareStatement("SELECT * FROM accounts WHERE accountID = " + account.getAccountId()).executeQuery();
+			r.next();
+			double currentBalance = r.getDouble("balance");
+			c.prepareStatement("UPDATE accounts SET balance = " + (currentBalance + amount) + " WHERE accountID = " + account.getAccountId()).execute();
+			return true;
 		} catch (SQLException throwables) {
 			throwables.printStackTrace();
 		}
+		System.out.println("Connection lost");
 		return false;
 	}
 
 	@Override
-	public boolean withdraw(Account account, double amount) {
+	public boolean withdraw(Account account, double amount) throws RemoteException {
 		try (Connection c = getConnection()) {
 			// Check if account exists
-			if (!c.prepareStatement("SELECT accountID from accounts where accountID = " + account.getAccountId()).execute()) {
+			if (!c.prepareStatement("SELECT accountID from accounts where accountID = " + account.getAccountId()).executeQuery().next()) {
 				System.out.println("Account does not exist");
 				return false;
 			}
 			// If account does exist
-			double currentBalance = c.prepareStatement("SELECT * FROM accounts WHERE accountID = " + account.getAccountId()).executeQuery().getDouble("balance");
-			c.prepareStatement("UPDATE accounts SET balance = " + currentBalance - account.getBalance() + " WHERE accountID = " + account.getAccountId()).execute();
+			ResultSet r = c.prepareStatement("SELECT * FROM accounts WHERE accountID = " + account.getAccountId()).executeQuery();
+			r.next();
+			double currentBalance = r.getDouble("balance");
+			c.prepareStatement("UPDATE accounts SET balance = " + (currentBalance - amount) + " WHERE accountID = " + account.getAccountId()).execute();
+			return true;
 		} catch (SQLException throwables) {
 			throwables.printStackTrace();
 		}
+		System.out.println("Connection lost");
 		return false;
 	}
 

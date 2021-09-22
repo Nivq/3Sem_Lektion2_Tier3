@@ -37,17 +37,17 @@ public class Server implements IServer{
 
 
     @Override
-    public boolean createAccount(Account account) {
+    public boolean createAccount(Account account) throws RemoteException {
         return DbServer.createAccount(account);
     }
 
     @Override
-    public boolean deposit(Account account, double amount) {
+    public boolean deposit(Account account, double amount) throws RemoteException {
         return DbServer.deposit(account,amount);
     }
 
     @Override
-    public boolean withdraw(Account account, double amount) {
+    public boolean withdraw(Account account, double amount) throws RemoteException {
         return DbServer.withdraw(account,amount);
     }
 }
