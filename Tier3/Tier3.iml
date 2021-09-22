@@ -10,5 +10,6 @@
     <orderEntry type="module" module-name="shared" />
     <orderEntry type="module" module-name="shared_2_3" />
     <orderEntry type="library" name="postgresql-42.2.19_2" level="application" />
+    <orderEntry type="library" name="postgresql-42.2.11" level="application" />
   </component>
 </module>
