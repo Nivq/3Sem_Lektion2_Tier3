@@ -1,3 +1,8 @@
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -8,6 +13,18 @@ public class DatabaseServer implements IDbServer {
 	public DatabaseServer() throws SQLException {
 		DriverManager.registerDriver(new org.postgresql.Driver());
 	}
+
+
+	public void startDatabaseServer() throws RemoteException, AlreadyBoundException {
+		Registry registry = LocateRegistry.createRegistry(1101);
+
+		registry.bind(NameConstants.DBServer.name(), this);
+
+		UnicastRemoteObject.exportObject(this, 1102);
+
+		System.out.println("Database Server Started!");
+	}
+
 
 	private Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(
