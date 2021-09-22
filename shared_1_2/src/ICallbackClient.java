@@ -1,5 +1,3 @@
-package shared;
-
 import java.rmi.Remote;
 
 public interface ICallbackClient extends Remote {
