@@ -37,11 +37,35 @@ public class DatabaseServer implements IDbServer {
 
 	@Override
 	public boolean deposit(Account account, double amount) {
+		try (Connection c = getConnection()) {
+			// Check if account exists
+			if (!c.prepareStatement("SELECT accountID from accounts where accountID = " + account.getAccountId()).execute()) {
+				System.out.println("Account does not exist");
+				return false;
+			}
+			// If account does exist
+			double currentBalance = c.prepareStatement("SELECT * FROM accounts WHERE accountID = " + account.getAccountId()).executeQuery().getDouble("balance");
+			c.prepareStatement("UPDATE accounts SET balance = " + currentBalance + account.getBalance() + " WHERE accountID = " + account.getAccountId()).execute();
+		} catch (SQLException throwables) {
+			throwables.printStackTrace();
+		}
 		return false;
 	}
 
 	@Override
 	public boolean withdraw(Account account, double amount) {
+		try (Connection c = getConnection()) {
+			// Check if account exists
+			if (!c.prepareStatement("SELECT accountID from accounts where accountID = " + account.getAccountId()).execute()) {
+				System.out.println("Account does not exist");
+				return false;
+			}
+			// If account does exist
+			double currentBalance = c.prepareStatement("SELECT * FROM accounts WHERE accountID = " + account.getAccountId()).executeQuery().getDouble("balance");
+			c.prepareStatement("UPDATE accounts SET balance = " + currentBalance - account.getBalance() + " WHERE accountID = " + account.getAccountId()).execute();
+		} catch (SQLException throwables) {
+			throwables.printStackTrace();
+		}
 		return false;
 	}
 
