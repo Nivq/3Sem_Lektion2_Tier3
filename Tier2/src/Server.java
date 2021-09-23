@@ -6,9 +6,10 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-public class Server implements ICallbackServer, IServer {
-	private Map<String, ICallbackClient> connectedClients;
+public class Server implements IServer {
+	private Map<String, Set<ICallbackClient>> connectedClients;
 	private IDbServer dbServer;
 
 	public void startServer() throws RemoteException, AlreadyBoundException, NotBoundException {
@@ -26,7 +27,12 @@ public class Server implements ICallbackServer, IServer {
 	private void connectToDbServer() throws RemoteException, NotBoundException {
 		Registry registry = LocateRegistry.getRegistry(1101);
 		dbServer = (IDbServer) registry.lookup(NameConstants.DBServer.name());
-		dbServer.register((ICallbackServer) this);
+//		dbServer.register(this);
+	}
+
+	@Override
+	public void register(ICallbackClient connectingClient) throws RemoteException {
+		connectedClients.get(connectingClient.getClass().getName()).add(connectingClient);
 	}
 
 
@@ -45,7 +51,7 @@ public class Server implements ICallbackServer, IServer {
 		return dbServer.withdraw(accountID, amount);
 	}
 
-	@Override
+	// @Override
 	public void update(String message) {
 		System.out.println(message);
 	}

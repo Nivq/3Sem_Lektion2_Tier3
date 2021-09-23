@@ -33,10 +33,13 @@ public class ClerkClient {
 	}
 
 	private static void cmdHandle(String[] cmdAndArgs) throws RemoteException {
+		if (cmdAndArgs.length < 2) {
+			return;
+		}
 		String cmd = cmdAndArgs[0];
 		int accountID = Integer.parseInt(cmdAndArgs[1]);
 		int amount = Integer.parseInt(cmdAndArgs[2]);
-		switch (cmd.toLowerCase()){
+		switch (cmd.toLowerCase()) {
 			case "withdraw" -> server.withdraw(accountID, amount);
 			case "deposit" -> server.deposit(accountID, amount);
 			default -> System.out.println("Invalid Command");
