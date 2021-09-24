@@ -5,4 +5,3 @@
 - Business Logik
 - Sende Objekter til Tier 3
 - Sammenligne kontonumre
-- 
