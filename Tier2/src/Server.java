@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Server implements IServer {
-	private Map<String, Set<ICallbackClient>> connectedClients;
+	private Map<String, Set<ICallback>> connectedClients;
 	private IDbServer dbServer;
 
 	public void startServer() throws RemoteException, AlreadyBoundException, NotBoundException {
@@ -31,7 +31,7 @@ public class Server implements IServer {
 	}
 
 	@Override
-	public void register(ICallbackClient connectingClient) throws RemoteException {
+	public void register(ICallback connectingClient) throws RemoteException {
 		connectedClients.get(connectingClient.getClass().getName()).add(connectingClient);
 	}
 

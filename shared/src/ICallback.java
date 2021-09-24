@@ -1,5 +1,5 @@
 import java.rmi.Remote;
 
-public interface ICallbackClient extends Remote {
+public interface ICallback extends Remote {
 	void update() throws RuntimeException;
 }

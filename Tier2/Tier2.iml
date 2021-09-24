@@ -8,7 +8,5 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="shared" />
-    <orderEntry type="module" module-name="shared_1_2" />
-    <orderEntry type="module" module-name="shared_2_3" />
   </component>
 </module>
