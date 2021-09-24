@@ -37,7 +37,7 @@ public class DatabaseServer implements IDbServer
 			"postgres", "sh1tvac");
 	}
 
-	@Override public void register(ICallback cbServer)
+	@Override public boolean register(ICallback cbServer)
 	{
 		connectedServers.add(cbServer);
 		try
@@ -50,7 +50,7 @@ public class DatabaseServer implements IDbServer
 		}
 	}
 
-	@Override public void putIntoDatabase(Account acc) throws RemoteException
+	@Override public boolean putIntoDatabase(Account acc) throws RemoteException
 	{
 		try (Connection connection = getConnection())
 		{

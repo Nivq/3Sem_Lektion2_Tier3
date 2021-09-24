@@ -1,3 +1,5 @@
+import jdk.jshell.spi.ExecutionControl;
+
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -38,17 +40,30 @@ public class Server implements IServer {
 
 	@Override
 	public boolean createAccount(int accountID) throws RemoteException {
-		return dbServer.createAccount(accountID);
+
+		System.out.println("Not implemented");
+		return false;
 	}
 
 	@Override
 	public boolean deposit(int accountID, double amount) throws RemoteException {
-		return dbServer.deposit(accountID, amount);
+		Account account = dbServer.getFromDatabase(accountID);
+		account.setBalance(account.getBalance() + amount);
+
+		return dbServer.putIntoDatabase(account);
 	}
 
 	@Override
 	public boolean withdraw(int accountID, double amount) throws RemoteException {
-		return dbServer.withdraw(accountID, amount);
+		if (amount < 0) {
+			System.out.println("amount is negative");
+
+			return false;
+		}
+		Account account = dbServer.getFromDatabase(accountID);
+		account.setBalance(account.getBalance()-amount);
+
+		return dbServer.putIntoDatabase(account);
 	}
 
 	// @Override

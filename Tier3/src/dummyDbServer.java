@@ -5,12 +5,12 @@ public class dummyDbServer implements IDbServer
 {
 	List<Account> cunts;
 
-	@Override public void register(ICallback cbServer) throws RemoteException
+	@Override public boolean register(ICallback cbServer) throws RemoteException
 	{
 		System.out.println("Registering cbServer to List of Connected Servers");
 	}
 
-	@Override public void putIntoDatabase(Account acc) throws RemoteException
+	@Override public boolean putIntoDatabase(Account acc) throws RemoteException
 	{
 		System.out.println("Putting " + acc.toString() + " in the Database");
 		for (Account cunt : cunts)
@@ -18,9 +18,10 @@ public class dummyDbServer implements IDbServer
 			if (cunt.getAccountId() == acc.getAccountId())
 			{
 				cunt.setBalance(acc.getBalance());
-				return;
+				return true;
 			}
 		}cunts.add(acc);
+		return false;
 	}
 
 	@Override public Account getFromDatabase(int accountID) throws RemoteException
