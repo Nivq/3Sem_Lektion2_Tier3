@@ -6,6 +6,8 @@ public interface IServer extends Remote {
 
 	boolean createAccount(int accountID) throws RemoteException;
 
+	Account findAccount(int accountID) throws RemoteException;
+
 	boolean deposit(int accountID, double amount) throws RemoteException;
 
 	boolean withdraw(int accountID, double amount) throws RemoteException;

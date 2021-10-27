@@ -24,7 +24,7 @@ public class AdminClient {
 			System.out.println("use: create <accountID>");
 			userInput = input.nextLine().split(" ");
 			try {
-				cmdHandle(userInput);
+				System.out.println(cmdHandle(userInput));
 			} catch (RemoteException e) {
 				System.out.println("Connection has been lost");
 				break;
@@ -32,12 +32,23 @@ public class AdminClient {
 		}
 	}
 
-	private static void cmdHandle(String[] cmdAndArgs) throws RemoteException {
+	private static String cmdHandle(String[] cmdAndArgs) throws RemoteException {
 		String cmd = cmdAndArgs[0];
 		int accountID = Integer.parseInt(cmdAndArgs[1]);
 		switch (cmd.toLowerCase()) {
-			case "withdraw" -> server.createAccount(accountID);
-			default -> System.out.println("Invalid Command");
+			case "create" -> {
+				if (server.createAccount(accountID)) {
+					return "Success";
+				} else {
+					return "Failed";
+				}
+			}
+			case "get" -> {
+				return server.findAccount(accountID).toString();
+			}
+			default -> {
+				return "Invalid Command";
+			}
 		}
 	}
 }

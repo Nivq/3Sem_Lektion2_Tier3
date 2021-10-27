@@ -40,14 +40,17 @@ public class DatabaseServer implements IDbServer
 	@Override public boolean register(ICallback cbServer)
 	{
 		connectedServers.add(cbServer);
-		try
-		{
-			cbServer.update("Connected to DB Server");
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
+		if (connectedServers.contains(cbServer))
+			return true;
+//		try
+//		{
+//			cbServer.update();
+//		}
+//		catch (RemoteException e)
+//		{
+//			e.printStackTrace();
+//		}
+		return false;
 	}
 
 	@Override public boolean putIntoDatabase(Account acc) throws RemoteException
@@ -63,12 +66,15 @@ public class DatabaseServer implements IDbServer
 			}
 			else
 			{
-				connection.prepareStatement("INSERT INTO accounts values(" + acc.getAccountId() + ", " + acc.getBalance() + ")");
+				connection.prepareStatement(
+					"INSERT INTO accounts values(" + acc.getAccountId() + ", " + acc.getBalance() + ")");
 			}
+			return true;
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+			return false;
 		}
 	}
 
